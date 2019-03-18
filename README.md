@@ -1,3 +1,17 @@
+# Unable to find valid certification path to requested target
+
+```
+javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+```
+This is because the JVM cannot verify the certificate chain path with the certificates present in the java keystore. This happens when you are using self signed certificates for development purposes and the root certificate is not present in the java keystore. To fix the issue with self signed certificate, you can either import the root CA to your java keystore. Or bypass the certificate chain verification and hostname verification in your code as show in the sample code. But this not recommened for production. This should only be used for development purposes.
+
+If you get this error from using a production url whose certificate are signed by a well know CA like Verisign or GoDaddy, then this means that the well known CA's root certificate is not present in your JVM keystore. The solution is goto the CA's certificate repository and install the root certificate in your JVM keystore.
+
+## Issue with GoDaddy’s SSL certs and Java
+
+https://tozny.com/blog/godaddys-ssl-certs-dont-work-in-java-the-right-solution
+
+
 # Troubleshooting SSL handshake issue
 
 
