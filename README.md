@@ -3,9 +3,18 @@
 ```
 javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
 ```
-This is because the JVM cannot verify the certificate chain path with the certificates present in the java keystore. This happens when you are using self signed certificates for development purposes and the root certificate is not present in the java keystore. To fix the issue with self signed certificate, you can either import the root CA to your java keystore. Or bypass the certificate chain verification and hostname verification in your code as show in the sample code. But this not recommened for production. This should only be used for development purposes.
 
-If you get this error from using a production url whose certificate are signed by a well know CA like Verisign or GoDaddy, then this means that the well known CA's root certificate is not present in your JVM keystore. The solution is goto the CA's certificate repository and install the root certificate in your JVM keystore.
+This is because the JVM cannot verify the certificate chain path with the certificates present in the java keystore. This happens when you are using self signed certificates for development purposes and the root certificate & intermediaries if any is not present in the java keystore. To fix the issue with self signed certificate, you can either import the root CA+intermediaries to your java keystore. Or bypass the certificate chain verification and hostname verification in your code as show in the sample code. But this not recommened for production. This should only be used for development purposes.
+
+If you get this error from using a production url whose certificate are signed by a well know CA like Verisign or GoDaddy, then this means that: 
+
+1. The well known CA's root certificate is not present in your JVM keystore. 
+   The solution is goto the CA's certificate repository and install the root certificate in your JVM keystore.
+   
+2. The java client cannot verify the certificate chain leading to root certificate even though its present in your keystore.
+   This is because the server did not provide the intermediate certificates during SSL handshake to client. Ideally, the server should provide the intermediate certificates. If the server is not able to do so, or if you are not in control of the server, then you can install the intermediate certificates in your keystore to fix this.
+   
+Site to check your SSL certificates and bundle intermediate certs : https://whatsmychaincert.com
 
 ## Issue with GoDaddy’s SSL certs and Java
 
